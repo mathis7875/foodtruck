@@ -1,0 +1,50 @@
+name: API Test Suite
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - name: Install Python Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Build API & Run Linter
+      run: |
+        # Because of your multi-stage Dockerfile, this runs flake8 first.
+        # If linting fails, this step fails.
+        docker build -t food-truck-api:latest .
+
+    - name: Run API and Tests via Docker Compose
+      run: |
+        # Use docker-compose to handle networking between API and Tester
+        docker-compose up --build --exit-code-from tester
+
+    - name: Upload Allure Results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: allure-results
+        path: allure-results/
+
+    - name: Publish Allure Report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: final-report
+        path: allure-report/

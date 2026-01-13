@@ -1,0 +1,14 @@
+{
+  "priority": 10, 
+  "request": {
+    "method": "GET",
+    "url": "/external-check/truck-permit-status"
+  },
+  "response": {
+    "status": 401,
+    "jsonBody": {
+      "error": "Unauthorized",
+      "message": "Valid X-API-KEY required."
+    }
+  }
+}

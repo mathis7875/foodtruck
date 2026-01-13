@@ -1,0 +1,10 @@
+pytest==8.0.0
+requests==2.31.0
+testcontainers==3.7.1
+jsonschema==4.21.1
+python-dotenv==1.0.1
+allure-pytest>=2.13.2
+urllib3<2.0.0
+flake8>=7.0.0
+black>=24.0.0
+wiremock>=2.0.0

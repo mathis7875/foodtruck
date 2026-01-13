@@ -1,0 +1,74 @@
+version: '3.8'
+
+services:
+  # 1. The .NET API Service
+  # Note: The Dockerfile for this service handles the Python Linting (Flake8) 
+  # in its first stage. If linting fails, this whole build will stop.
+  api:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    image: food-truck-api:latest
+    ports:
+      - "5000:5000"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - EXTERNAL_SERVICE_URL=http://mock-provider:8080
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/swagger/index.html"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    # # ...
+    # volumes:
+    #   - ./data:/app/data  # Assume DB is in /data 
+  #tester:
+    # # ...
+    # volumes:
+    #   - ./data:/tests/data
+    # environment:
+    #   - DATABASE_PATH=/tests/data/food_trucks.db  
+
+  # 2. The Python Test Runner
+  # This container waits for the API to be healthy before firing the tests.
+  tester:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    depends_on:
+      api:
+        condition: service_healthy
+      mock-provider:
+        condition: service_started
+    environment:
+      #- API_BASE_URL=http://localhost:5000
+      - MOCK_SERVER_URL=http://mock-provider:8080
+    volumes:
+      - ./allure-results:/app/allure-results
+      - .:/app # Mounts local code for real-time development
+    # Exit code from this service will signal success/failure to CI/CD
+    command: pytest tests/ --alluredir=allure-results
+
+  # 3. The Allure Reporting Service
+  # Automatically generates and hosts the HTML dashboard on port 4040.
+  allure:
+    image: frankescobar/allure-docker-service
+    ports:
+      - "4040:4040"
+    environment:
+      - CHECK_RESULTS_EVERY_SECONDS=2
+      - KEEP_HISTORY=1
+    volumes:
+      - ./allure-results:/app/allure-results
+      - ./allure-report:/app/allure-report
+    depends_on:
+      - tester
+
+  # 4. The Mock Server (WireMock)
+  # Used to simulate third-party API dependencies.
+  mock-provider:
+    image: wiremock/wiremock:latest
+    ports:
+      - "8081:8080"
+    volumes:
+      - ./wiremock:/home/wiremock    

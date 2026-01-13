@@ -1,0 +1,17 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/external-check/truck-permit-status"
+  },
+  "response": {
+    "status": 200,
+    "jsonBody": {
+      "status": "ACTIVE",
+      "permit_valid": true,
+      "permit_id": "ABC-12345"
+    },
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

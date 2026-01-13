@@ -1,0 +1,63 @@
+{
+  "openapi": "3.0.1",
+  "info": { "title": "FoodTrucksApi", "version": "v1" },
+  "paths": {
+    "/api/MobileFoodTrucks/searchByName": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": { "type": "array", "items": { "$ref": "#/components/schemas/FoodTruck" } },
+                "example": [{ "applicant": "Taco Truck", "locationid": 123 }]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/MobileFoodTrucks/searchByStreet": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": { "type": "array", "items": { "$ref": "#/components/schemas/FoodTruck" } },
+                "example": [{ "applicant": "Hot Dog Stand", "locationid": 456 }]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/MobileFoodTrucks/nearestFoodTrucks": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": { "type": "array", "items": { "$ref": "#/components/schemas/FoodTruck" } },
+                "example": [{ "applicant": "Nearby Eats", "locationid": 789 }]
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "FoodTruck": {
+        "type": "object",
+        "properties": {
+          "applicant": { "type": "string" },
+          "locationid": { "type": "integer" }
+        },
+        "required": ["applicant", "locationid"]
+      }
+    }
+  }
+}
