@@ -22,6 +22,7 @@ This project provides a **.NET 8 Web API** (containerized via Docker) that parse
 * **Allure Commandline:**
 * **macOS:** `brew install allure`
 * **Windows:** `scoop install allure` or manual download from [Allure GitHub](https://github.com/allure-framework/allure2/releases).
+* **Clone project to local**** :  git clone
 
 
 
